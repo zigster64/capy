@@ -93,7 +93,7 @@ pub fn build(b: *std.Build) !void {
     var walker = try examplesDir.walk(b.allocator);
     defer walker.deinit();
     while (try walker.next()) |entry| {
-        if (entry.kind == .File and std.mem.eql(u8, std.fs.path.extension(entry.path), ".zig")) {
+        if (entry.kind == .file and std.mem.eql(u8, std.fs.path.extension(entry.path), ".zig")) {
             const name = try std.mem.replaceOwned(u8, b.allocator, entry.path[0 .. entry.path.len - 4], std.fs.path.sep_str, "-");
             defer b.allocator.free(name);
 
@@ -149,14 +149,13 @@ pub fn build(b: *std.Build) !void {
     });
     lib.linkLibC();
     _ = try install(lib, .{});
-    // lib.emit_h = true;
-    lib.install();
+    b.installArtifact(lib);
 
     const sharedlib_install_step = b.addInstallArtifact(lib);
     b.getInstallStep().dependOn(&sharedlib_install_step.step);
 
     const buildc_step = b.step("shared", "Build capy as a shared library (with C ABI)");
-    buildc_step.dependOn(&lib.install_step.?.step);
+    buildc_step.dependOn(&lib.step);
 
     const tests = b.addTest(.{
         .root_source_file = FileSource.relative("src/main.zig"),
