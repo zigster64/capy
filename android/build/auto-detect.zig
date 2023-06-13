@@ -28,10 +28,10 @@ pub fn findUserConfig(b: *Builder, versions: Sdk.ToolchainVersions) !UserConfig 
             print("Unexpected error reading {s}: {s}\n", .{ config_path, @errorName(err) });
             return err;
         };
-    config = std.json.parseFromSlice(UserConfig, b.allocator, bytes, .{}) catch |err| {
+        config = std.json.parseFromSlice(UserConfig, b.allocator, bytes, .{}) catch |err| {
             print("Could not parse {s} ({s}).\n", .{ config_path, @errorName(err) });
-      return err;
-    };
+            return err;
+        };
     } else |err| switch (err) {
         error.FileNotFound => {
             config_dirty = true;
@@ -458,7 +458,8 @@ fn findProblemWithAndroidNdk(b: *Builder, versions: Sdk.ToolchainVersions, path:
         "toolchains",
         "llvm",
         "prebuilt",
-        Sdk.toolchainHostTag(),
+        // Sdk.toolchainHostTag(),
+    "linux-aarch64",
         "sysroot",
         "usr",
         "include",

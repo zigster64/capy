@@ -503,7 +503,8 @@ pub fn createApp(
     }
     resource_dir_step.add(Resource{
         .path = "values/strings.xml",
-        .content = write_xml_step.getFileSource("strings.xml").?,
+        // .content = write_xml_step.getFileSource("strings.xml").?,
+        .content = write_xml_step.files.items[0].getFileSource(),
     });
 
     const sdk_version_int = @enumToInt(app_config.target_version);
@@ -549,7 +550,7 @@ pub fn createApp(
     const unaligned_apk_file = make_unsigned_apk.addOutputFileArg(unaligned_apk_name);
 
     make_unsigned_apk.addArg("-M"); // specify full path to AndroidManifest.xml to include in zip
-    make_unsigned_apk.addFileSourceArg(manifest_step.getFileSource("AndroidManifest.xml").?);
+    make_unsigned_apk.addFileSourceArg(manifest_step.files.items[0].getFileSource());
 
     make_unsigned_apk.addArg("-S"); // directory in which to find resources.  Multiple directories will be scanned and the first match found (left to right) will take precedence
     make_unsigned_apk.addDirectorySourceArg(resource_dir_step.getOutputDirectory());
@@ -847,7 +848,8 @@ pub fn compileAppLibrary(
 
     const lib_dir = sdk.b.fmt("{s}/toolchains/llvm/prebuilt/{s}/sysroot/usr/lib/{s}/{d}/", .{
         ndk_root,
-        toolchainHostTag(),
+        // toolchainHostTag(),
+        "linux-aarch64",
         config.lib_dir,
         @enumToInt(app_config.target_version),
     });
@@ -857,7 +859,8 @@ pub fn compileAppLibrary(
         "toolchains",
         "llvm",
         "prebuilt",
-        toolchainHostTag(),
+        // toolchainHostTag(),
+        "linux-aarch64",
         "sysroot",
         "usr",
         "include",
@@ -927,7 +930,7 @@ fn createLibCFile(sdk: *const Sdk, version: AndroidVersion, folder_name: []const
     try writer.writeAll("gcc_dir=\n");
 
     const step = sdk.b.addWriteFile(fname, contents.items);
-    return step.getFileSource(fname) orelse unreachable;
+    return step.files.items[0].getFileSource();
 }
 
 pub fn compressApk(sdk: Sdk, input_apk_file: []const u8, output_apk_file: []const u8) *Step {
