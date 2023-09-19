@@ -46,9 +46,72 @@ pub inline fn getEventUserData(peer: PeerType) *EventUserData {
 }
 
 pub fn Events(comptime T: type) type {
-    _ = T;
-    return struct {};
+    return struct {
+        pub inline fn setCallback(self: *T, comptime eType: EventType, cb: anytype) !void {
+            _ = cb;
+            _ = eType;
+            _ = self;
+        }
+        pub inline fn setUserData(self: *T, data: anytype) void {
+            _ = data;
+            _ = self;
+        }
+    };
 }
+
+pub const Container = struct {
+    pub usingnamespace Events(Container);
+
+    pub fn add(self: *const Container, peer: PeerType) void {
+        _ = peer;
+        _ = self;
+    }
+
+    pub fn remove(self: *const Container, peer: PeerType) void {
+        _ = peer;
+        _ = self;
+    }
+
+    pub fn move(self: *const Container, peer: PeerType, x: u32, y: u32) void {
+        _ = y;
+        _ = x;
+        _ = peer;
+        _ = self;
+    }
+
+    pub fn resize(self: *const Container, peer: PeerType, w: u32, h: u32) void {
+        _ = h;
+        _ = w;
+        _ = peer;
+        _ = self;
+    }
+
+    pub fn setTabOrder(self: *const Container, peers: []const PeerType) void {
+        _ = peers;
+        _ = self;
+    }
+};
+
+pub const Canvas = struct {
+    pub usingnamespace Events(Canvas);
+    pub const DrawContext = struct {};
+};
+
+pub const Label = struct {
+    pub usingnamespace Events(Label);
+};
+
+pub const ScrollView = struct {
+    pub usingnamespace Events(ScrollView);
+};
+
+pub const TextField = struct {
+    pub usingnamespace Events(TextField);
+};
+
+pub const Button = struct {
+    pub usingnamespace Events(Button);
+};
 
 pub const Window = struct {
     source_dpi: u32 = 96,
